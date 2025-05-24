@@ -14,10 +14,10 @@ def capturar_com_camera():
             break
         cv2.imshow("Captura de Câmera", frame)
         k = cv2.waitKey(1)
-        if k == ord('s'):
+        if k == ord('s' or 'S'):
             cv2.imwrite("captura.jpg", frame)
             print("Imagem capturada e salva como 'captura.jpg'")
-        elif k == ord('q'):
+        elif k == ord('q' or 'Q'):
             break
 
     cam.release()
