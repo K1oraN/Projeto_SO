@@ -1,19 +1,47 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import database
 
-def mostrar_tela_login(root):
+# Cores e fontes
+COR_BG = "#1e1e2f"
+COR_ENTRADA = "#2e2e3f"
+COR_TEXTO = "#ffffff"
+COR_BOTAO = "#4e8cff"
+COR_BOTAO_HOVER = "#6faeff"
+FONTE = ("Segoe UI", 11)
+
+def estilizar(root):
+    estilo = ttk.Style()
+    root.tk.call("source", "azure.tcl")  # Se quiser usar temas externos como 'Azure'
+    estilo.theme_use("default")
+
+    estilo.configure("TLabel", foreground=COR_TEXTO, background=COR_BG, font=FONTE)
+    estilo.configure("TEntry", padding=6, font=FONTE)
+    estilo.configure("TButton",
+                     font=FONTE,
+                     padding=6,
+                     background=COR_BOTAO,
+                     foreground=COR_TEXTO)
+    estilo.map("TButton",
+               background=[("active", COR_BOTAO_HOVER)])
+
+def limpar_tela(root):
     for widget in root.winfo_children():
         widget.destroy()
+    root.configure(bg=COR_BG)
 
-    tk.Label(root, text="Login", font=("Arial", 16)).pack(pady=10)
+def mostrar_tela_login(root):
+    limpar_tela(root)
+    estilizar(root)
 
-    tk.Label(root, text="Usuário:").pack()
-    entry_user = tk.Entry(root)
+    ttk.Label(root, text="LOGIN", font=("Segoe UI", 18, "bold")).pack(pady=20)
+
+    ttk.Label(root, text="Usuário:").pack(pady=5)
+    entry_user = ttk.Entry(root, width=30)
     entry_user.pack()
 
-    tk.Label(root, text="Senha:").pack()
-    entry_pass = tk.Entry(root, show="*")
+    ttk.Label(root, text="Senha:").pack(pady=5)
+    entry_pass = ttk.Entry(root, show="*", width=30)
     entry_pass.pack()
 
     def verificar_login():
@@ -24,24 +52,24 @@ def mostrar_tela_login(root):
         else:
             messagebox.showerror("Erro", "Usuário ou senha inválidos.")
 
-    tk.Button(root, text="Entrar", command=verificar_login).pack(pady=10)
+    ttk.Button(root, text="Entrar", command=verificar_login).pack(pady=20)
 
 def mostrar_tela_cadastro(root):
-    for widget in root.winfo_children():
-        widget.destroy()
+    limpar_tela(root)
 
-    tk.Label(root, text="Cadastro de Pessoas", font=("Arial", 16)).pack(pady=10)
+    ttk.Label(root, text="CADASTRO", font=("Segoe UI", 18, "bold")).pack(pady=15)
 
-    tk.Label(root, text="Nome:").pack()
-    entry_nome = tk.Entry(root)
+    ttk.Label(root, text="Nome:").pack(pady=5)
+    entry_nome = ttk.Entry(root, width=30)
     entry_nome.pack()
 
-    tk.Label(root, text="Idade:").pack()
-    entry_idade = tk.Entry(root)
+    ttk.Label(root, text="Idade:").pack(pady=5)
+    entry_idade = ttk.Entry(root, width=30)
     entry_idade.pack()
 
-    resultado_text = tk.Text(root, height=8, width=50)
-    resultado_text.pack(pady=10)
+    resultado_text = tk.Text(root, height=8, width=45, bg=COR_ENTRADA, fg=COR_TEXTO,
+                             font=("Consolas", 10), bd=0, relief=tk.FLAT)
+    resultado_text.pack(pady=15)
 
     def cadastrar():
         nome = entry_nome.get()
@@ -59,13 +87,12 @@ def mostrar_tela_cadastro(root):
 
         database.cadastros.append((nome.upper(), idade))
         atualizar_resultado()
-
         entry_nome.delete(0, tk.END)
         entry_idade.delete(0, tk.END)
 
     def atualizar_resultado():
         resultado_text.delete("1.0", tk.END)
         for nome, idade in database.cadastros:
-            resultado_text.insert(tk.END, f"Nome: {nome}, Idade: {idade} anos\n")
+            resultado_text.insert(tk.END, f"Nome: {nome}  |  Idade: {idade} anos\n")
 
-    tk.Button(root, text="Cadastrar", command=cadastrar).pack(pady=5)
+    ttk.Button(root, text="Cadastrar", command=cadastrar).pack(pady=10)
