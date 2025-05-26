@@ -52,7 +52,8 @@ def mostrar_tela_login(root):
         else:
             messagebox.showerror("Erro", "Usuário ou senha inválidos.")
 
-    ttk.Button(root, text="Entrar", command=verificar_login).pack(pady=20)
+    ttk.Button(root, text="Entrar", command=verificar_login).pack(pady=10)
+    ttk.Button(root, text="Cadastrar novo usuário", command=lambda: mostrar_tela_cadastro_login(root)).pack()
 
 def mostrar_tela_cadastro(root):
     limpar_tela(root)
@@ -96,3 +97,46 @@ def mostrar_tela_cadastro(root):
             resultado_text.insert(tk.END, f"Nome: {nome}  |  Idade: {idade} anos\n")
 
     ttk.Button(root, text="Cadastrar", command=cadastrar).pack(pady=10)
+
+# NOVA FUNÇÃO: Cadastro de novo usuário (login e senha)
+def mostrar_tela_cadastro_login(root):
+    limpar_tela(root)
+
+    ttk.Label(root, text="CRIAR CONTA", font=("Segoe UI", 18, "bold")).pack(pady=15)
+
+    ttk.Label(root, text="Novo usuário:").pack(pady=5)
+    entry_user = ttk.Entry(root, width=30)
+    entry_user.pack()
+
+    ttk.Label(root, text="Senha:").pack(pady=5)
+    entry_pass = ttk.Entry(root, width=30, show="*")
+    entry_pass.pack()
+
+    ttk.Label(root, text="Confirmar senha:").pack(pady=5)
+    entry_confirm = ttk.Entry(root, width=30, show="*")
+    entry_confirm.pack()
+
+    def cadastrar_usuario():
+        user = entry_user.get()
+        senha = entry_pass.get()
+        confirmar = entry_confirm.get()
+
+        if not user or not senha or not confirmar:
+            messagebox.showwarning("Atenção", "Preencha todos os campos.")
+            return
+
+        if user in database.usuarios:
+            messagebox.showerror("Erro", "Usuário já existe.")
+            return
+
+        if senha != confirmar:
+            messagebox.showerror("Erro", "As senhas não coincidem.")
+            return
+
+        database.usuarios[user] = senha
+        database.salvar_usuarios()
+        messagebox.showinfo("Sucesso", "Usuário cadastrado com sucesso!")
+        mostrar_tela_login(root)
+
+    ttk.Button(root, text="Cadastrar", command=cadastrar_usuario).pack(pady=10)
+    ttk.Button(root, text="Voltar", command=lambda: mostrar_tela_login(root)).pack(pady=5)
